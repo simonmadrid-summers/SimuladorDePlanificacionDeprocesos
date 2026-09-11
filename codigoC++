@@ -1,1 +1,196 @@
+#include <iostream>
+#include <string>
 
+using namespace std;
+
+// ---------------------------------------------------------
+// Estructura que representa un proceso del sistema SIGET
+// ---------------------------------------------------------
+struct Proceso
+{
+    int id;
+    string nombre;
+
+    // Atributos del proceso
+    int tiempoEjecucion;
+    int prioridadAlerta;
+    int tamanoDatos;
+
+    // Estado actual del proceso
+    string estado;
+};
+
+
+// ---------------------------------------------------------
+// Funcion para mostrar la informacion de un proceso
+// ---------------------------------------------------------
+void mostrarProceso(Proceso p)
+{
+    cout << "Proceso: " << p.nombre << endl;
+    cout << "ID: " << p.id << endl;
+    cout << "Tiempo de ejecucion: " << p.tiempoEjecucion << " segundos" << endl;
+    cout << "Prioridad de alerta: " << p.prioridadAlerta << endl;
+    cout << "Tamano de datos: " << p.tamanoDatos << " MB" << endl;
+    cout << "Estado: " << p.estado << endl;
+}
+
+
+// ---------------------------------------------------------
+// ALGORITMO 1: FIFO
+//
+// FIFO significa "First In, First Out".
+// El primer proceso que llega es el primero en ejecutarse.
+// ---------------------------------------------------------
+void ejecutarFIFO(Proceso procesos[], int cantidad)
+{
+    cout << "\n==========================================" << endl;
+    cout << "       ALGORITMO FIFO" << endl;
+    cout << "==========================================\n" << endl;
+
+    for (int i = 0; i < cantidad; i++)
+    {
+        // El proceso pasa de Nuevo a Listo
+        procesos[i].estado = "Listo";
+
+        cout << procesos[i].nombre
+             << " -> Nuevo -> Listo" << endl;
+
+        // El proceso comienza a ejecutarse
+        procesos[i].estado = "En ejecucion";
+
+        cout << procesos[i].nombre
+             << " -> En ejecucion" << endl;
+
+        // Simulamos un bloqueo durante el procesamiento
+        procesos[i].estado = "Bloqueado";
+
+        cout << procesos[i].nombre
+             << " -> Bloqueado" << endl;
+
+        // Finalmente termina
+        procesos[i].estado = "Terminado";
+
+        cout << procesos[i].nombre
+             << " -> Terminado\n" << endl;
+    }
+}
+
+
+// ---------------------------------------------------------
+// ALGORITMO 2: PRIORIDAD
+//
+// El proceso con mayor prioridad se ejecuta primero.
+// Una prioridad de 10 es mayor que una prioridad de 5.
+// ---------------------------------------------------------
+void ejecutarPrioridad(Proceso procesos[], int cantidad)
+{
+    cout << "\n==========================================" << endl;
+    cout << "       ALGORITMO POR PRIORIDAD" << endl;
+    cout << "==========================================\n" << endl;
+
+    // Ordenamos los procesos de mayor a menor prioridad.
+    // Utilizamos un ordenamiento sencillo tipo burbuja.
+    for (int i = 0; i < cantidad - 1; i++)
+    {
+        for (int j = 0; j < cantidad - 1 - i; j++)
+        {
+            if (procesos[j].prioridadAlerta <
+                procesos[j + 1].prioridadAlerta)
+            {
+                Proceso temporal = procesos[j];
+                procesos[j] = procesos[j + 1];
+                procesos[j + 1] = temporal;
+            }
+        }
+    }
+
+    // Ejecutamos los procesos en el nuevo orden
+    for (int i = 0; i < cantidad; i++)
+    {
+        procesos[i].estado = "Listo";
+
+        cout << procesos[i].nombre
+             << " -> Nuevo -> Listo" << endl;
+
+        procesos[i].estado = "En ejecucion";
+
+        cout << procesos[i].nombre
+             << " -> En ejecucion" << endl;
+
+        procesos[i].estado = "Bloqueado";
+
+        cout << procesos[i].nombre
+             << " -> Bloqueado" << endl;
+
+        procesos[i].estado = "Terminado";
+
+        cout << procesos[i].nombre
+             << " -> Terminado\n" << endl;
+    }
+}
+
+
+// ---------------------------------------------------------
+// PROGRAMA PRINCIPAL
+// ---------------------------------------------------------
+int main()
+{
+    // Creamos 4 procesos relacionados con el SIGET.
+    Proceso procesos[4] =
+    {
+        {1, "Procesamiento de trafico", 5, 4, 500, "Nuevo"},
+        {2, "Alerta de accidente", 3, 10, 100, "Nuevo"},
+        {3, "Estado de semaforos", 4, 8, 250, "Nuevo"},
+        {4, "Analisis de datos", 7, 2, 800, "Nuevo"}
+    };
+
+    // -----------------------------------------------------
+    // Mostrar los procesos inicialmente
+    // -----------------------------------------------------
+    cout << "==========================================" << endl;
+    cout << "      SIMULADOR DE CPU - SIGET" << endl;
+    cout << "==========================================\n" << endl;
+
+    cout << "Procesos registrados:\n" << endl;
+
+    for (int i = 0; i < 4; i++)
+    {
+        mostrarProceso(procesos[i]);
+        cout << "------------------------------------------" << endl;
+    }
+
+
+    // -----------------------------------------------------
+    // Ejecutamos FIFO
+    // -----------------------------------------------------
+    ejecutarFIFO(procesos, 4);
+
+
+    // -----------------------------------------------------
+    // Volvemos a crear los procesos para realizar
+    // una nueva simulacion utilizando prioridad.
+    // -----------------------------------------------------
+    Proceso procesosPrioridad[4] =
+    {
+        {1, "Procesamiento de trafico", 5, 4, 500, "Nuevo"},
+        {2, "Alerta de accidente", 3, 10, 100, "Nuevo"},
+        {3, "Estado de semaforos", 4, 8, 250, "Nuevo"},
+        {4, "Analisis de datos", 7, 2, 800, "Nuevo"}
+    };
+
+
+    // -----------------------------------------------------
+    // Ejecutamos el algoritmo por prioridad
+    // -----------------------------------------------------
+    ejecutarPrioridad(procesosPrioridad, 4);
+
+
+    // -----------------------------------------------------
+    // Final del programa
+    // -----------------------------------------------------
+    cout << "==========================================" << endl;
+    cout << "       SIMULACION FINALIZADA" << endl;
+    cout << "==========================================" << endl;
+
+    return 0;
+}
